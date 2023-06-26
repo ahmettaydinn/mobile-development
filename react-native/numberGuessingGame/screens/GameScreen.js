@@ -7,6 +7,7 @@ import NumberContainer from '../components/NumberContainer';
 import {useEffect, useState} from 'react';
 import Card from '../components/Card';
 import InstructionText from '../components/InstructionText';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 function GameScreen({userNumber, onGameOver}) {
   let minBoundary = 1;
@@ -52,7 +53,7 @@ function GameScreen({userNumber, onGameOver}) {
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonContainer}>
             <AhmetButton onPress={nextGuessHandler.bind(this, 'lower')}>
-              -
+              <Ionicons name="md-remove" />
             </AhmetButton>
           </View>
           <View style={styles.buttonContainer}>
