@@ -9,14 +9,21 @@ import GameOverScreen from './screens/GameOverScreen';
 const App = () => {
   const [userNumber, setUserNumber] = useState(null);
   const [isGameOver, setIsGameOver] = useState(true);
+  const [guessRounds, setGuessRounds] = useState(0);
 
   const pickedNumberHandler = pickedNumber => {
     setUserNumber(pickedNumber);
     setIsGameOver(false);
   };
 
-  const gameOverHandler = () => {
+  const gameOverHandler = numberOfRounds => {
     setIsGameOver(true);
+    setGuessRounds(numberOfRounds);
+  };
+
+  const startNewGameHandler = () => {
+    setUserNumber(null);
+    setGuessRounds(0);
   };
 
   let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
@@ -28,7 +35,13 @@ const App = () => {
   }
 
   if (isGameOver && userNumber) {
-    screen = <GameOverScreen />;
+    screen = (
+      <GameOverScreen
+        onStartNewGame={startNewGameHandler}
+        roundsNumber={guessRounds}
+        userNumber={userNumber}
+      />
+    );
   }
 
   return (
@@ -36,7 +49,7 @@ const App = () => {
       colors={[Colors.primary500, Colors.accent500]}
       style={styles.rootScreen}>
       <ImageBackground
-        source={require('./assets/background.png')}
+        source={require('./assets/images/background.png')}
         style={styles.rootScreen}
         resizeMode="cover"
         imageStyle={styles.backgroundImage}>

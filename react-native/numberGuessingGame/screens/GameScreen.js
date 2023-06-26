@@ -1,4 +1,4 @@
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {Alert, FlatList, StyleSheet, Text, View} from 'react-native';
 import AhmetButton from '../components/AhmetButton';
 import AhmetTitle from '../components/AhmetTitle';
 import Colors from '../constants/colors';
@@ -8,16 +8,14 @@ import {useEffect, useState} from 'react';
 import Card from '../components/Card';
 import InstructionText from '../components/InstructionText';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import GuessLogItem from '../components/GuessLogItem';
 
+let minBoundary = 1;
+let maxBoundary = 100;
 function GameScreen({userNumber, onGameOver}) {
-  let minBoundary = 1;
-  let maxBoundary = 100;
-  const initialGuess = generateRandomBetween(
-    minBoundary,
-    maxBoundary,
-    userNumber,
-  );
+  const initialGuess = generateRandomBetween(1, 100, userNumber);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
+  const [guessRounds, setGuessRounds] = useState([initialGuess]);
 
   const nextGuessHandler = direction => {
     if (
@@ -32,16 +30,28 @@ function GameScreen({userNumber, onGameOver}) {
     } else {
       minBoundary = currentGuess + 1;
     }
-    const newRandomNumber = generateRandomBetween(1, 100, currentGuess);
+    const newRandomNumber = generateRandomBetween(
+      minBoundary,
+      maxBoundary,
+      currentGuess,
+    );
     setCurrentGuess(newRandomNumber);
+    setGuessRounds(prev => [newRandomNumber, ...prev]);
   };
 
   useEffect(() => {
     if (currentGuess === userNumber) {
-      onGameOver();
+      onGameOver(guessRounds.length);
     }
   }, [currentGuess, userNumber, onGameOver]);
 
+  useEffect(() => {
+    minBoundary = 1;
+    maxBoundary = 100;
+  }, []);
+
+  const guessRoundsListLength = guessRounds.length;
+  console.log(maxBoundary);
   return (
     <View style={styles.screen}>
       <AhmetTitle>Opponent's guess</AhmetTitle>
@@ -53,17 +63,28 @@ function GameScreen({userNumber, onGameOver}) {
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonContainer}>
             <AhmetButton onPress={nextGuessHandler.bind(this, 'lower')}>
-              <Ionicons name="md-remove" />
+              <Ionicons name="md-remove" size={24} color={'white'} />
             </AhmetButton>
           </View>
           <View style={styles.buttonContainer}>
             <AhmetButton onPress={nextGuessHandler.bind(this, 'greater')}>
-              +
+              <Ionicons name="md-add" size={24} color={'white'} />
             </AhmetButton>
           </View>
         </View>
       </Card>
-      <View>{/* LOG ROUNDS */}</View>
+      <View style={styles.listContainer}>
+        <FlatList
+          data={guessRounds}
+          renderItem={itemData => (
+            <GuessLogItem
+              roundNumber={guessRoundsListLength - itemData.index}
+              guess={itemData.item}
+            />
+          )}
+          keyExtractor={item => item}
+        />
+      </View>
     </View>
   );
 }
@@ -87,6 +108,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
   },
+  listContainer: {flex: 1, padding: 16},
 });
 
 export default GameScreen;

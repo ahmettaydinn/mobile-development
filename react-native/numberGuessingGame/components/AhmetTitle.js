@@ -9,8 +9,9 @@ export default AhmetTitle;
 
 const styles = StyleSheet.create({
   title: {
+    fontFamily: 'Open Sans',
+    fontWeight: 700,
     fontSize: 24,
-    fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
     borderWidth: 2,
