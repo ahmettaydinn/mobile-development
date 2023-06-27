@@ -1,31 +1,59 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import AhmetButton from '../components/AhmetButton';
 import AhmetTitle from '../components/AhmetTitle';
 import Colors from '../constants/colors';
 
 function GameOverScreen({roundsNumber, userNumber, onStartNewGame}) {
+  const {width, height} = useWindowDimensions();
+
+  let imageSize = 300;
+
+  if (width < 380) {
+    imageSize = 150;
+  }
+
+  if (height < 400) {
+    imageSize = 80;
+  }
+
+  const imageStyle = {
+    width: imageSize,
+    height: imageSize,
+    borderRadius: imageSize / 2,
+  };
+
   return (
-    <View style={styles.rootContainer}>
-      <AhmetTitle>GAME OVER</AhmetTitle>
-      <View style={styles.imageContainer}>
-        <Image
-          style={styles.image}
-          source={require('../assets/images/success.png')}
-        />
+    <ScrollView style={{flex: 1}}>
+      <View style={styles.rootContainer}>
+        <AhmetTitle>GAME OVER</AhmetTitle>
+        <View style={[styles.imageContainer, imageStyle]}>
+          <Image
+            style={styles.image}
+            source={require('../assets/images/success.png')}
+          />
+        </View>
+        <View>
+          <Text style={styles.summaryText}>
+            Your phone needed
+            <Text style={styles.highlight}> {roundsNumber} </Text>
+            rounds to guess the number
+            <Text style={styles.highlight}> {userNumber}</Text>.
+          </Text>
+        </View>
+        <AhmetButton onPress={onStartNewGame}>Start New Game</AhmetButton>
       </View>
-      <View>
-        <Text style={styles.summaryText}>
-          Your phone needed
-          <Text style={styles.highlight}> {roundsNumber} </Text>
-          rounds to guess the number
-          <Text style={styles.highlight}> {userNumber}</Text>.
-        </Text>
-      </View>
-      <AhmetButton onPress={onStartNewGame}>Start New Game</AhmetButton>
-    </View>
+    </ScrollView>
   );
 }
-
+const deviceWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
@@ -34,9 +62,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageContainer: {
-    borderRadius: 150,
-    width: 300,
-    height: 300,
+    // borderRadius: deviceWidth < 380 ? 75 : 150,
+    // width: deviceWidth < 380 ? 150 : 300,
+    // height: deviceWidth < 380 ? 150 : 300,
     borderWidth: 3,
     borderColor: Colors.primary800,
     overflow: 'hidden',

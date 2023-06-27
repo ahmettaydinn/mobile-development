@@ -1,4 +1,12 @@
-import {StyleSheet, TextInput, View, Alert, Text} from 'react-native';
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Alert,
+  KeyboardAvoidingView,
+  useWindowDimensions,
+  ScrollView,
+} from 'react-native';
 import AhmetButton from '../components/AhmetButton';
 import {useState} from 'react';
 import Colors from '../constants/colors';
@@ -7,6 +15,8 @@ import Card from '../components/Card';
 import InstructionText from '../components/InstructionText';
 
 function StartGameScreen({onPickNumber}) {
+  const {width, height} = useWindowDimensions();
+
   const [enteredNumber, setEnteredNumber] = useState('');
 
   function numberInputHandler(enteredText) {
@@ -38,37 +48,50 @@ function StartGameScreen({onPickNumber}) {
     onPickNumber(chosenNumber);
   }
 
+  const marginTopDistance = height < 400 ? 30 : 100;
+
+  console.log(marginTopDistance);
+
   return (
-    <View style={styles.rootContainer}>
-      <AhmetTitle>Guess My Number</AhmetTitle>
-      <Card>
-        <InstructionText>Enter a Number</InstructionText>
-        <TextInput
-          style={styles.numberInput}
-          maxLength={2}
-          keyboardType="number-pad"
-          autoCapitalize="none"
-          autoCorrect={false}
-          value={enteredNumber}
-          onChangeText={numberInputHandler}
-        />
-        <View style={styles.buttonsContainer}>
-          <View style={styles.buttonContainer}>
-            <AhmetButton onPress={resetInputHandler}>Reset</AhmetButton>
-          </View>
-          <View style={styles.buttonContainer}>
-            <AhmetButton onPress={confirmInputHandler}>Confirm</AhmetButton>
-          </View>
+    <ScrollView style={styles.screen}>
+      <KeyboardAvoidingView style={styles.screen} behavior="position">
+        <View style={[styles.rootContainer, {marginTop: marginTopDistance}]}>
+          <AhmetTitle>Guess My Number</AhmetTitle>
+          <Card>
+            <InstructionText>Enter a Number</InstructionText>
+            <TextInput
+              style={styles.numberInput}
+              maxLength={2}
+              keyboardType="number-pad"
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={enteredNumber}
+              onChangeText={numberInputHandler}
+            />
+            <View style={styles.buttonsContainer}>
+              <View style={styles.buttonContainer}>
+                <AhmetButton onPress={resetInputHandler}>Reset</AhmetButton>
+              </View>
+              <View style={styles.buttonContainer}>
+                <AhmetButton onPress={confirmInputHandler}>Confirm</AhmetButton>
+              </View>
+            </View>
+          </Card>
         </View>
-      </Card>
-    </View>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 }
 
 export default StartGameScreen;
 
 const styles = StyleSheet.create({
-  rootContainer: {flex: 1, marginTop: 100, alignItems: 'center'},
+  rootContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+
+  screen: {flex: 1},
 
   numberInput: {
     textAlign: 'center',

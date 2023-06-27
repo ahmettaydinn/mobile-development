@@ -1,4 +1,10 @@
-import {Alert, FlatList, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import AhmetButton from '../components/AhmetButton';
 import AhmetTitle from '../components/AhmetTitle';
 import Colors from '../constants/colors';
@@ -16,6 +22,8 @@ function GameScreen({userNumber, onGameOver}) {
   const initialGuess = generateRandomBetween(1, 100, userNumber);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [guessRounds, setGuessRounds] = useState([initialGuess]);
+
+  const {width, height} = useWindowDimensions();
 
   const nextGuessHandler = direction => {
     if (
@@ -51,11 +59,11 @@ function GameScreen({userNumber, onGameOver}) {
   }, []);
 
   const guessRoundsListLength = guessRounds.length;
-  console.log(maxBoundary);
-  return (
-    <View style={styles.screen}>
-      <AhmetTitle>Opponent's guess</AhmetTitle>
+
+  let content = (
+    <>
       <NumberContainer>{currentGuess}</NumberContainer>
+      {content}
       <Card>
         <InstructionText style={styles.instructionText}>
           Greater or Lower?
@@ -73,6 +81,32 @@ function GameScreen({userNumber, onGameOver}) {
           </View>
         </View>
       </Card>
+    </>
+  );
+
+  if (width > 500) {
+    content = (
+      <>
+        <View style={styles.buttonsWideContainer}>
+          <View style={styles.buttonContainer}>
+            <AhmetButton onPress={nextGuessHandler.bind(this, 'lower')}>
+              <Ionicons name="md-remove" size={24} color={'white'} />
+            </AhmetButton>
+          </View>
+          <NumberContainer>{currentGuess}</NumberContainer>
+          <View style={styles.buttonContainer}>
+            <AhmetButton onPress={nextGuessHandler.bind(this, 'greater')}>
+              <Ionicons name="md-add" size={24} color={'white'} />
+            </AhmetButton>
+          </View>
+        </View>
+      </>
+    );
+  }
+  return (
+    <View style={styles.screen}>
+      <AhmetTitle>Opponent's guess</AhmetTitle>
+      {content}
       <View style={styles.listContainer}>
         <FlatList
           data={guessRounds}
@@ -90,7 +124,7 @@ function GameScreen({userNumber, onGameOver}) {
 }
 
 const styles = StyleSheet.create({
-  screen: {flex: 1, padding: 12},
+  screen: {flex: 1, padding: 12, alignItems: 'center'},
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -109,6 +143,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContainer: {flex: 1, padding: 16},
+  buttonsWideContainer: {flexDirection: 'row', alignItems: 'center'},
 });
 
 export default GameScreen;
